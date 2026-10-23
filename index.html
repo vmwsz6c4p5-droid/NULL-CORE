@@ -1,1 +1,1543 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#080907">
+<title>NULL//CORE</title>
 
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+
+:root{
+  --bg:#080907;
+  --panel:#10110e;
+  --panel2:#151712;
+  --line:#282b23;
+  --line2:#34382d;
+  --acid:#d8ff3e;
+  --acid2:#a9c92e;
+  --text:#f0f2e9;
+  --muted:#74796b;
+  --danger:#ff4f54;
+}
+
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+  user-select:none;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,Arial,sans-serif;
+}
+
+button,input{
+  font:inherit;
+}
+
+button{
+  color:inherit;
+}
+
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:.055;
+  background-image:
+    linear-gradient(rgba(255,255,255,.7) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.7) 1px,transparent 1px);
+  background-size:42px 42px;
+}
+
+.shell{
+  position:relative;
+  width:100%;
+  max-width:520px;
+  height:100dvh;
+  margin:auto;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 28%,rgba(216,255,62,.06),transparent 34%),
+    var(--bg);
+}
+
+.top{
+  height:86px;
+  padding:calc(17px + env(safe-area-inset-top)) 19px 10px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  position:relative;
+  z-index:20;
+}
+
+.brand-small{
+  font-family:"Space Mono",monospace;
+  font-size:10px;
+  letter-spacing:3px;
+  color:var(--muted);
+}
+
+.brand{
+  margin-top:2px;
+  font-family:"Space Mono",monospace;
+  font-size:17px;
+  font-weight:700;
+  letter-spacing:-.8px;
+}
+
+.brand span{
+  color:var(--acid);
+}
+
+.rank{
+  text-align:right;
+}
+
+.rank-label{
+  font-family:"Space Mono",monospace;
+  font-size:9px;
+  color:var(--muted);
+  letter-spacing:1.5px;
+}
+
+.rank-value{
+  font-family:"Space Mono",monospace;
+  margin-top:3px;
+  font-size:12px;
+}
+
+.secret{
+  position:absolute;
+  width:45px;
+  height:45px;
+  right:7px;
+  top:calc(7px + env(safe-area-inset-top));
+  opacity:0;
+}
+
+.screen{
+  position:absolute;
+  top:86px;
+  left:0;
+  right:0;
+  bottom:78px;
+  overflow:auto;
+  display:none;
+  padding:0 18px 24px;
+}
+
+.screen.active{
+  display:block;
+}
+
+.home{
+  overflow:hidden;
+}
+
+.wallet{
+  padding-top:16px;
+}
+
+.micro{
+  font-family:"Space Mono",monospace;
+  font-size:9px;
+  color:var(--muted);
+  letter-spacing:2px;
+}
+
+.balance-row{
+  display:flex;
+  align-items:center;
+  margin-top:5px;
+}
+
+.currency-symbol{
+  width:30px;
+  height:30px;
+  margin-right:10px;
+  border:1px solid var(--acid);
+  transform:rotate(45deg);
+  display:grid;
+  place-items:center;
+}
+
+.currency-symbol:after{
+  content:"";
+  width:9px;
+  height:9px;
+  background:var(--acid);
+}
+
+.balance{
+  font-family:"Space Mono",monospace;
+  font-weight:700;
+  font-size:36px;
+  letter-spacing:-2px;
+}
+
+.rate{
+  font-family:"Space Mono",monospace;
+  font-size:10px;
+  margin-top:8px;
+  color:var(--muted);
+}
+
+.rate b{
+  color:var(--acid);
+  font-weight:400;
+}
+
+.core-zone{
+  height:355px;
+  display:grid;
+  place-items:center;
+  position:relative;
+}
+
+.core-zone:before{
+  content:"";
+  position:absolute;
+  width:290px;
+  height:290px;
+  border:1px solid #191b17;
+  border-radius:50%;
+}
+
+.orbit{
+  position:absolute;
+  width:260px;
+  height:260px;
+  border:1px dashed #2b2e26;
+  border-radius:50%;
+  animation:spin 24s linear infinite;
+}
+
+.orbit:before,
+.orbit:after{
+  content:"";
+  position:absolute;
+  width:6px;
+  height:6px;
+  background:var(--acid);
+}
+
+.orbit:before{
+  top:28px;
+  left:39px;
+}
+
+.orbit:after{
+  bottom:19px;
+  right:53px;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+.core{
+  position:relative;
+  width:190px;
+  height:190px;
+  border:0;
+  background:none;
+  padding:0;
+  cursor:pointer;
+  transition:transform .08s;
+}
+
+.core:active{
+  transform:scale(.95);
+}
+
+.core-svg{
+  width:100%;
+  height:100%;
+  overflow:visible;
+  filter:drop-shadow(0 0 25px rgba(216,255,62,.08));
+}
+
+.core-line{
+  fill:#0d0f0b;
+  stroke:#454b39;
+  stroke-width:1;
+}
+
+.core-face{
+  fill:#141711;
+  stroke:var(--acid);
+  stroke-width:1.4;
+}
+
+.core-inner{
+  fill:var(--acid);
+  opacity:.95;
+}
+
+.core-cut{
+  fill:#080907;
+}
+
+.core.flash .core-svg{
+  filter:drop-shadow(0 0 30px rgba(216,255,62,.5));
+}
+
+.tap-label{
+  position:absolute;
+  bottom:22px;
+  font-family:"Space Mono",monospace;
+  font-size:9px;
+  letter-spacing:2px;
+  color:#555a4d;
+}
+
+.energy{
+  margin-top:-2px;
+}
+
+.energy-top{
+  display:flex;
+  justify-content:space-between;
+  font-family:"Space Mono",monospace;
+  font-size:9px;
+  letter-spacing:1px;
+  color:var(--muted);
+}
+
+.energy-track{
+  height:4px;
+  background:#1a1c17;
+  margin-top:9px;
+  overflow:hidden;
+}
+
+.energy-fill{
+  height:100%;
+  background:var(--acid);
+  width:100%;
+  transition:width .2s;
+}
+
+.section-head{
+  padding:14px 0 18px;
+}
+
+.section-index{
+  font-family:"Space Mono",monospace;
+  font-size:9px;
+  color:var(--acid);
+  letter-spacing:2px;
+}
+
+.section-title{
+  font-family:"Space Mono",monospace;
+  font-size:25px;
+  font-weight:700;
+  letter-spacing:-1.5px;
+  margin-top:4px;
+}
+
+.section-sub{
+  font-size:12px;
+  color:var(--muted);
+  line-height:1.5;
+  margin-top:7px;
+  max-width:330px;
+}
+
+.module{
+  border-top:1px solid var(--line);
+  padding:17px 0;
+  display:grid;
+  grid-template-columns:50px 1fr auto;
+  gap:13px;
+  align-items:center;
+}
+
+.module-mark{
+  width:50px;
+  height:50px;
+  border:1px solid var(--line2);
+  display:grid;
+  place-items:center;
+  position:relative;
+}
+
+.module-mark svg{
+  width:26px;
+  height:26px;
+  stroke:var(--acid);
+  fill:none;
+  stroke-width:1.3;
+}
+
+.module-name{
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.2px;
+}
+
+.module-meta{
+  margin-top:5px;
+  font-family:"Space Mono",monospace;
+  color:var(--muted);
+  font-size:9px;
+}
+
+.module-meta b{
+  color:var(--acid);
+  font-weight:400;
+}
+
+.buy{
+  min-width:82px;
+  height:38px;
+  border:1px solid var(--line2);
+  background:transparent;
+  font-family:"Space Mono",monospace;
+  font-size:9px;
+  cursor:pointer;
+}
+
+.buy.available{
+  border-color:var(--acid);
+  color:var(--acid);
+}
+
+.buy:disabled{
+  color:#454940;
+}
+
+.contract{
+  border-top:1px solid var(--line);
+  padding:18px 0;
+}
+
+.contract-top{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.contract-id{
+  font-family:"Space Mono",monospace;
+  font-size:9px;
+  color:var(--acid);
+}
+
+.contract-name{
+  font-weight:700;
+  font-size:14px;
+  margin-top:5px;
+}
+
+.contract-desc{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:5px;
+}
+
+.contract-reward{
+  font-family:"Space Mono",monospace;
+  font-size:10px;
+  text-align:right;
+  white-space:nowrap;
+}
+
+.contract-progress{
+  height:3px;
+  background:#1b1d18;
+  margin:15px 0 12px;
+}
+
+.contract-progress div{
+  height:100%;
+  background:var(--acid);
+}
+
+.claim{
+  width:100%;
+  height:39px;
+  border:1px solid var(--line2);
+  background:transparent;
+  font-family:"Space Mono",monospace;
+  font-size:9px;
+  letter-spacing:1px;
+}
+
+.claim.ready{
+  background:var(--acid);
+  border-color:var(--acid);
+  color:#080907;
+}
+
+.identity{
+  margin-top:10px;
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  padding:24px 0;
+  display:flex;
+  align-items:center;
+  gap:17px;
+}
+
+.ident-mark{
+  width:67px;
+  height:67px;
+  border:1px solid var(--acid);
+  position:relative;
+}
+
+.ident-mark:before,
+.ident-mark:after{
+  content:"";
+  position:absolute;
+  background:var(--acid);
+}
+
+.ident-mark:before{
+  width:1px;
+  top:9px;
+  bottom:9px;
+  left:50%;
+}
+
+.ident-mark:after{
+  height:1px;
+  left:9px;
+  right:9px;
+  top:50%;
+}
+
+.ident-center{
+  position:absolute;
+  width:17px;
+  height:17px;
+  background:var(--bg);
+  border:1px solid var(--acid);
+  left:24px;
+  top:24px;
+  transform:rotate(45deg);
+  z-index:2;
+}
+
+.identity-name{
+  font-size:18px;
+  font-weight:700;
+}
+
+.identity-id{
+  font-family:"Space Mono",monospace;
+  font-size:9px;
+  color:var(--muted);
+  margin-top:7px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  border-bottom:1px solid var(--line);
+}
+
+.stat{
+  min-height:92px;
+  padding:18px 0;
+  border-bottom:1px solid var(--line);
+}
+
+.stat:nth-child(odd){
+  border-right:1px solid var(--line);
+}
+
+.stat:nth-child(even){
+  padding-left:18px;
+}
+
+.stat-num{
+  font-family:"Space Mono",monospace;
+  font-size:19px;
+}
+
+.stat-label{
+  font-family:"Space Mono",monospace;
+  font-size:8px;
+  color:var(--muted);
+  letter-spacing:1.5px;
+  margin-top:7px;
+}
+
+.nav{
+  position:absolute;
+  bottom:0;
+  left:0;
+  right:0;
+  height:78px;
+  padding-bottom:env(safe-area-inset-bottom);
+  border-top:1px solid var(--line);
+  background:rgba(8,9,7,.97);
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  z-index:30;
+}
+
+.nav-btn{
+  border:0;
+  background:none;
+  color:#555a50;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  cursor:pointer;
+}
+
+.nav-btn svg{
+  width:19px;
+  height:19px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.3;
+}
+
+.nav-btn span{
+  font-family:"Space Mono",monospace;
+  font-size:7px;
+  letter-spacing:1px;
+}
+
+.nav-btn.active{
+  color:var(--acid);
+}
+
+.tap-float{
+  position:fixed;
+  z-index:200;
+  pointer-events:none;
+  font-family:"Space Mono",monospace;
+  font-weight:700;
+  color:var(--acid);
+  font-size:16px;
+  animation:tapfloat .7s ease-out forwards;
+}
+
+@keyframes tapfloat{
+  to{
+    transform:translateY(-75px);
+    opacity:0;
+  }
+}
+
+.toast{
+  position:fixed;
+  z-index:500;
+  top:calc(15px + env(safe-area-inset-top));
+  left:50%;
+  transform:translate(-50%,-15px);
+  opacity:0;
+  padding:10px 14px;
+  border:1px solid var(--line2);
+  background:#10120e;
+  font-family:"Space Mono",monospace;
+  font-size:9px;
+  pointer-events:none;
+  transition:.2s;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+.modal-bg{
+  position:fixed;
+  inset:0;
+  z-index:1000;
+  background:rgba(0,0,0,.88);
+  display:none;
+  place-items:center;
+  padding:20px;
+}
+
+.modal-bg.open{
+  display:grid;
+}
+
+.modal{
+  width:100%;
+  max-width:390px;
+  border:1px solid var(--line2);
+  background:#0d0f0c;
+  padding:22px;
+}
+
+.modal-code{
+  font-family:"Space Mono",monospace;
+  color:var(--acid);
+  font-size:9px;
+  letter-spacing:2px;
+}
+
+.modal-title{
+  font-family:"Space Mono",monospace;
+  font-size:20px;
+  font-weight:700;
+  margin:7px 0 18px;
+}
+
+.field{
+  width:100%;
+  height:46px;
+  border:1px solid var(--line2);
+  background:#080907;
+  color:var(--text);
+  outline:none;
+  padding:0 13px;
+  margin-bottom:9px;
+  font-family:"Space Mono",monospace;
+}
+
+.primary{
+  width:100%;
+  height:43px;
+  background:var(--acid);
+  color:#080907;
+  border:0;
+  font-family:"Space Mono",monospace;
+  font-size:10px;
+  font-weight:700;
+  margin-bottom:8px;
+}
+
+.secondary{
+  width:100%;
+  height:42px;
+  background:transparent;
+  color:var(--text);
+  border:1px solid var(--line2);
+  font-family:"Space Mono",monospace;
+  font-size:9px;
+  margin-bottom:8px;
+}
+
+.danger{
+  color:var(--danger);
+  border-color:#4d2425;
+}
+
+.admin{
+  display:none;
+}
+
+.admin.open{
+  display:block;
+}
+
+.pin.hidden{
+  display:none;
+}
+
+.admin-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin-bottom:8px;
+}
+
+.admin-grid button{
+  margin:0;
+}
+
+.close-modal{
+  border:0;
+  background:none;
+  width:100%;
+  padding:12px 0 0;
+  color:var(--muted);
+  font-family:"Space Mono",monospace;
+  font-size:8px;
+}
+
+@media(max-height:720px){
+  .core-zone{height:290px}
+  .core{width:160px;height:160px}
+  .orbit{width:220px;height:220px}
+  .core-zone:before{width:245px;height:245px}
+  .balance{font-size:31px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="toast" id="toast"></div>
+
+<div class="shell">
+
+<header class="top">
+  <div>
+    <div class="brand-small">PRIVATE NETWORK</div>
+    <div class="brand">NULL<span>//</span>CORE</div>
+  </div>
+
+  <div class="rank">
+    <div class="rank-label">ACCESS TIER</div>
+    <div class="rank-value" id="rank">TIER 01</div>
+  </div>
+
+  <button class="secret" id="secret"></button>
+</header>
+
+<!-- HOME -->
+<section class="screen home active" id="home">
+
+  <div class="wallet">
+    <div class="micro">AVAILABLE // NCREDITS</div>
+
+    <div class="balance-row">
+      <div class="currency-symbol"></div>
+      <div class="balance" id="balance">0</div>
+    </div>
+
+    <div class="rate">
+      NETWORK OUTPUT //
+      <b id="rate">+0 / H</b>
+    </div>
+  </div>
+
+  <div class="core-zone">
+
+    <div class="orbit"></div>
+
+    <button class="core" id="core">
+      <svg class="core-svg" viewBox="0 0 200 200">
+        <polygon class="core-line"
+          points="100,4 169,32 196,100 168,168 100,196 32,168 4,100 32,32"/>
+        <polygon class="core-line"
+          points="100,22 155,45 178,100 155,155 100,178 45,155 22,100 45,45"/>
+        <polygon class="core-face"
+          points="100,42 142,58 158,100 142,142 100,158 58,142 42,100 58,58"/>
+        <polygon class="core-inner"
+          points="100,66 125,76 135,100 125,124 100,134 75,124 65,100 75,76"/>
+        <polygon class="core-cut"
+          points="100,84 116,100 100,116 84,100"/>
+      </svg>
+    </button>
+
+    <div class="tap-label">TOUCH CORE // EXTRACT</div>
+  </div>
+
+  <div class="energy">
+    <div class="energy-top">
+      <span>CORE STABILITY</span>
+      <span id="energyText">1000 / 1000</span>
+    </div>
+
+    <div class="energy-track">
+      <div class="energy-fill" id="energyFill"></div>
+    </div>
+  </div>
+
+</section>
+
+<!-- MODULES -->
+<section class="screen" id="modules">
+
+  <div class="section-head">
+    <div class="section-index">01 // INFRASTRUCTURE</div>
+    <div class="section-title">MODULES</div>
+    <div class="section-sub">
+      Расширяй закрытую сеть. Каждый модуль производит NCREDITS автономно.
+    </div>
+  </div>
+
+  <div id="moduleList"></div>
+
+</section>
+
+<!-- CONTRACTS -->
+<section class="screen" id="contracts">
+
+  <div class="section-head">
+    <div class="section-index">02 // OPERATIONS</div>
+    <div class="section-title">CONTRACTS</div>
+    <div class="section-sub">
+      Закрытые операции сети. Выполняй условия и получай дополнительные ресурсы.
+    </div>
+  </div>
+
+  <div id="contractList"></div>
+
+</section>
+
+<!-- ID -->
+<section class="screen" id="profile">
+
+  <div class="section-head">
+    <div class="section-index">03 // OPERATOR</div>
+    <div class="section-title">IDENTITY</div>
+  </div>
+
+  <div class="identity">
+    <div class="ident-mark">
+      <div class="ident-center"></div>
+    </div>
+
+    <div>
+      <div class="identity-name" id="playerName">UNKNOWN OPERATOR</div>
+      <div class="identity-id" id="playerId">ID // LOCAL-0000</div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-num" id="sBalance">0</div>
+      <div class="stat-label">TOTAL NCREDITS</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-num" id="sTaps">0</div>
+      <div class="stat-label">CORE TOUCHES</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-num" id="sOutput">0</div>
+      <div class="stat-label">OUTPUT / HOUR</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-num" id="sTier">01</div>
+      <div class="stat-label">ACCESS TIER</div>
+    </div>
+  </div>
+
+</section>
+
+<nav class="nav">
+
+<button class="nav-btn active" data-page="home">
+<svg viewBox="0 0 24 24">
+<path d="M12 2 20 6.5v11L12 22l-8-4.5v-11Z"/>
+<path d="m8 9 4-2 4 2v6l-4 2-4-2Z"/>
+</svg>
+<span>CORE</span>
+</button>
+
+<button class="nav-btn" data-page="modules">
+<svg viewBox="0 0 24 24">
+<rect x="3" y="3" width="7" height="7"/>
+<rect x="14" y="3" width="7" height="7"/>
+<rect x="3" y="14" width="7" height="7"/>
+<rect x="14" y="14" width="7" height="7"/>
+</svg>
+<span>MODULES</span>
+</button>
+
+<button class="nav-btn" data-page="contracts">
+<svg viewBox="0 0 24 24">
+<path d="M5 3h14v18H5z"/>
+<path d="M8 8h8M8 12h8M8 16h5"/>
+</svg>
+<span>OPS</span>
+</button>
+
+<button class="nav-btn" data-page="profile">
+<svg viewBox="0 0 24 24">
+<circle cx="12" cy="8" r="4"/>
+<path d="M4 21c1-5 4-7 8-7s7 2 8 7"/>
+</svg>
+<span>IDENTITY</span>
+</button>
+
+</nav>
+
+</div>
+
+<!-- ADMIN -->
+<div class="modal-bg" id="modal">
+<div class="modal">
+
+  <div class="pin" id="pin">
+    <div class="modal-code">RESTRICTED // ROOT</div>
+    <div class="modal-title">AUTHORIZATION</div>
+
+    <input
+      class="field"
+      id="pinInput"
+      type="password"
+      inputmode="numeric"
+      placeholder="ROOT KEY"
+    >
+
+    <button class="primary" id="pinEnter">
+      VERIFY KEY
+    </button>
+  </div>
+
+  <div class="admin" id="admin">
+    <div class="modal-code">ROOT // CONTROL</div>
+    <div class="modal-title">SYSTEM PANEL</div>
+
+    <input class="field" id="coinInput" type="number" placeholder="NCREDITS">
+    <div class="admin-grid">
+      <button class="secondary" id="addCoins">ADD</button>
+      <button class="secondary" id="setCoins">SET</button>
+    </div>
+
+    <input class="field" id="tapInput" type="number" placeholder="CORE POWER">
+
+    <button class="secondary" id="setTap">SET CORE POWER</button>
+    <button class="secondary" id="fullEnergy">RESTORE STABILITY</button>
+    <button class="secondary" id="giveMillion">ADD 1,000,000</button>
+    <button class="secondary danger" id="reset">WIPE LOCAL DATA</button>
+  </div>
+
+  <button class="close-modal" id="closeModal">CLOSE TERMINAL</button>
+
+</div>
+</div>
+
+<script>
+const tg = window.Telegram?.WebApp;
+
+if(tg){
+  tg.ready();
+  tg.expand();
+
+  try{
+    tg.setHeaderColor("#080907");
+    tg.setBackgroundColor("#080907");
+  }catch(e){}
+
+  const user = tg.initDataUnsafe?.user;
+
+  if(user){
+    document.getElementById("playerName").textContent =
+      ((user.first_name || "") + " " + (user.last_name || "")).trim().toUpperCase();
+
+    document.getElementById("playerId").textContent =
+      "ID // TG-" + user.id;
+  }
+}
+
+const initial = {
+  balance:500,
+  energy:1000,
+  maxEnergy:1000,
+  tapPower:2,
+  taps:0,
+  output:0,
+  tier:1,
+  lastSave:Date.now(),
+  daily:0,
+  claimed:{
+    touch100:false,
+    module3:false
+  },
+  modules:{
+    relay:{level:0,base:800},
+    vault:{level:0,base:3500},
+    node:{level:0,base:12000},
+    forge:{level:0,base:40000},
+    black:{level:0,base:130000}
+  }
+};
+
+const moduleInfo = {
+  relay:{
+    name:"SIGNAL RELAY",
+    output:180,
+    icon:`<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="3"/><circle cx="16" cy="16" r="8"/><circle cx="16" cy="16" r="13"/></svg>`
+  },
+  vault:{
+    name:"DATA VAULT",
+    output:850,
+    icon:`<svg viewBox="0 0 32 32"><rect x="5" y="7" width="22" height="18"/><path d="M9 12h14M9 16h14M9 20h8"/></svg>`
+  },
+  node:{
+    name:"GHOST NODE",
+    output:2900,
+    icon:`<svg viewBox="0 0 32 32"><path d="M16 3 27 9v14l-11 6-11-6V9Z"/><circle cx="16" cy="16" r="4"/></svg>`
+  },
+  forge:{
+    name:"SYNTH FORGE",
+    output:9200,
+    icon:`<svg viewBox="0 0 32 32"><path d="M6 25 11 7h10l5 18Z"/><path d="M10 18h12M13 12h6"/></svg>`
+  },
+  black:{
+    name:"BLACK ARRAY",
+    output:31000,
+    icon:`<svg viewBox="0 0 32 32"><path d="M16 3v26M3 16h26M7 7l18 18M25 7 7 25"/><circle cx="16" cy="16" r="6"/></svg>`
+  }
+};
+
+function cloneInitial(){
+  return JSON.parse(JSON.stringify(initial));
+}
+
+function load(){
+  try{
+    const saved = JSON.parse(localStorage.getItem("nullcore"));
+
+    if(!saved) return cloneInitial();
+
+    return {
+      ...cloneInitial(),
+      ...saved,
+      claimed:{...initial.claimed,...(saved.claimed||{})},
+      modules:{...initial.modules,...(saved.modules||{})}
+    };
+  }catch{
+    return cloneInitial();
+  }
+}
+
+let game = load();
+
+function save(){
+  game.lastSave = Date.now();
+  localStorage.setItem("nullcore",JSON.stringify(game));
+}
+
+function fmt(n){
+  n=Math.floor(n);
+
+  if(n>=1e9) return (n/1e9).toFixed(2).replace(/\.00$/,"")+"B";
+  if(n>=1e6) return (n/1e6).toFixed(2).replace(/\.00$/,"")+"M";
+  if(n>=1e3) return (n/1e3).toFixed(1).replace(/\.0$/,"")+"K";
+
+  return n.toLocaleString("en-US");
+}
+
+function recalc(){
+  let output=0;
+
+  Object.keys(game.modules).forEach(key=>{
+    output += game.modules[key].level * moduleInfo[key].output;
+  });
+
+  game.output=output;
+
+  const score=game.taps/80+game.output/500;
+  game.tier=Math.max(1,Math.min(99,Math.floor(Math.sqrt(score))+1));
+}
+
+function moduleCost(key){
+  const m=game.modules[key];
+  return Math.floor(m.base*Math.pow(1.68,m.level));
+}
+
+function buyModule(key){
+  const cost=moduleCost(key);
+
+  if(game.balance<cost){
+    notify("INSUFFICIENT NCREDITS");
+    return;
+  }
+
+  game.balance-=cost;
+  game.modules[key].level++;
+
+  recalc();
+  save();
+  render();
+
+  try{
+    tg?.HapticFeedback?.notificationOccurred("success");
+  }catch{}
+}
+
+function renderModules(){
+  const root=document.getElementById("moduleList");
+  root.innerHTML="";
+
+  Object.keys(moduleInfo).forEach(key=>{
+    const info=moduleInfo[key];
+    const m=game.modules[key];
+    const cost=moduleCost(key);
+
+    const el=document.createElement("div");
+    el.className="module";
+
+    el.innerHTML=`
+      <div class="module-mark">${info.icon}</div>
+
+      <div>
+        <div class="module-name">${info.name}</div>
+        <div class="module-meta">
+          LVL ${String(m.level).padStart(2,"0")}
+          &nbsp;//&nbsp;
+          <b>+${fmt(info.output)}/H</b>
+        </div>
+      </div>
+
+      <button
+        class="buy ${game.balance>=cost?"available":""}"
+        ${game.balance<cost?"disabled":""}
+        data-buy="${key}">
+        ${fmt(cost)}
+      </button>
+    `;
+
+    root.appendChild(el);
+  });
+
+  root.querySelectorAll("[data-buy]").forEach(btn=>{
+    btn.onclick=()=>buyModule(btn.dataset.buy);
+  });
+}
+
+function totalModuleLevels(){
+  return Object.values(game.modules).reduce((sum,m)=>sum+m.level,0);
+}
+
+function renderContracts(){
+  const root=document.getElementById("contractList");
+
+  const touchProgress=Math.min(100,game.taps);
+  const modules=Math.min(3,totalModuleLevels());
+
+  const dailyReady=!game.daily || Date.now()-game.daily>=86400000;
+
+  root.innerHTML=`
+    <div class="contract">
+      <div class="contract-top">
+        <div>
+          <div class="contract-id">CONTRACT // 001</div>
+          <div class="contract-name">CORE CALIBRATION</div>
+          <div class="contract-desc">Выполнить 100 касаний ядра.</div>
+        </div>
+        <div class="contract-reward">+5,000 NC</div>
+      </div>
+
+      <div class="contract-progress">
+        <div style="width:${touchProgress}%"></div>
+      </div>
+
+      <button
+        class="claim ${game.taps>=100&&!game.claimed.touch100?"ready":""}"
+        id="claimTouch">
+        ${
+          game.claimed.touch100
+            ?"COMPLETED"
+            :game.taps>=100
+              ?"CLAIM REWARD"
+              :`${Math.min(game.taps,100)} / 100`
+        }
+      </button>
+    </div>
+
+    <div class="contract">
+      <div class="contract-top">
+        <div>
+          <div class="contract-id">CONTRACT // 002</div>
+          <div class="contract-name">NETWORK EXPANSION</div>
+          <div class="contract-desc">Установить 3 уровня модулей.</div>
+        </div>
+        <div class="contract-reward">+12,000 NC</div>
+      </div>
+
+      <div class="contract-progress">
+        <div style="width:${modules/3*100}%"></div>
+      </div>
+
+      <button
+        class="claim ${totalModuleLevels()>=3&&!game.claimed.module3?"ready":""}"
+        id="claimModules">
+        ${
+          game.claimed.module3
+            ?"COMPLETED"
+            :totalModuleLevels()>=3
+              ?"CLAIM REWARD"
+              :`${modules} / 3`
+        }
+      </button>
+    </div>
+
+    <div class="contract">
+      <div class="contract-top">
+        <div>
+          <div class="contract-id">PROTOCOL // DAILY</div>
+          <div class="contract-name">DAILY HANDSHAKE</div>
+          <div class="contract-desc">Авторизовать оператора один раз в сутки.</div>
+        </div>
+        <div class="contract-reward">+20,000 NC</div>
+      </div>
+
+      <div class="contract-progress">
+        <div style="width:${dailyReady?100:0}%"></div>
+      </div>
+
+      <button
+        class="claim ${dailyReady?"ready":""}"
+        id="claimDaily">
+        ${dailyReady?"AUTHORIZE":"LOCKED"}
+      </button>
+    </div>
+  `;
+
+  document.getElementById("claimTouch").onclick=()=>{
+    if(game.claimed.touch100) return;
+
+    if(game.taps<100){
+      notify("CONTRACT NOT COMPLETE");
+      return;
+    }
+
+    game.claimed.touch100=true;
+    game.balance+=5000;
+    save();
+    render();
+    notify("+5,000 NCREDITS");
+  };
+
+  document.getElementById("claimModules").onclick=()=>{
+    if(game.claimed.module3) return;
+
+    if(totalModuleLevels()<3){
+      notify("CONTRACT NOT COMPLETE");
+      return;
+    }
+
+    game.claimed.module3=true;
+    game.balance+=12000;
+    save();
+    render();
+    notify("+12,000 NCREDITS");
+  };
+
+  document.getElementById("claimDaily").onclick=()=>{
+    if(game.daily && Date.now()-game.daily<86400000){
+      notify("PROTOCOL LOCKED");
+      return;
+    }
+
+    game.daily=Date.now();
+    game.balance+=20000;
+    save();
+    render();
+    notify("+20,000 NCREDITS");
+  };
+}
+
+function render(){
+  recalc();
+
+  document.getElementById("balance").textContent=fmt(game.balance);
+  document.getElementById("rate").textContent="+"+fmt(game.output)+" / H";
+
+  document.getElementById("energyText").textContent=
+    Math.floor(game.energy)+" / "+game.maxEnergy;
+
+  document.getElementById("energyFill").style.width=
+    Math.max(0,Math.min(100,game.energy/game.maxEnergy*100))+"%";
+
+  document.getElementById("rank").textContent=
+    "TIER "+String(game.tier).padStart(2,"0");
+
+  document.getElementById("sBalance").textContent=fmt(game.balance);
+  document.getElementById("sTaps").textContent=fmt(game.taps);
+  document.getElementById("sOutput").textContent=fmt(game.output);
+  document.getElementById("sTier").textContent=String(game.tier).padStart(2,"0");
+
+  renderModules();
+  renderContracts();
+}
+
+const core=document.getElementById("core");
+
+core.addEventListener("pointerdown",e=>{
+  if(game.energy<game.tapPower){
+    notify("CORE STABILITY DEPLETED");
+    return;
+  }
+
+  game.balance+=game.tapPower;
+  game.energy-=game.tapPower;
+  game.taps++;
+
+  const f=document.createElement("div");
+  f.className="tap-float";
+  f.textContent="+"+game.tapPower;
+  f.style.left=(e.clientX-10)+"px";
+  f.style.top=(e.clientY-15)+"px";
+  document.body.appendChild(f);
+  setTimeout(()=>f.remove(),700);
+
+  core.classList.add("flash");
+  setTimeout(()=>core.classList.remove("flash"),90);
+
+  try{
+    tg?.HapticFeedback?.impactOccurred("light");
+  }catch{}
+
+  recalc();
+  save();
+  render();
+});
+
+setInterval(()=>{
+  if(game.energy<game.maxEnergy){
+    game.energy=Math.min(game.maxEnergy,game.energy+4);
+  }
+
+  if(game.output>0){
+    game.balance+=game.output/3600;
+  }
+
+  save();
+  render();
+},1000);
+
+function offline(){
+  const old=game.lastSave;
+  if(!old) return;
+
+  const seconds=Math.min((Date.now()-old)/1000,28800);
+
+  if(seconds>20 && game.output>0){
+    const reward=Math.floor(game.output/3600*seconds);
+
+    if(reward>0){
+      game.balance+=reward;
+      setTimeout(()=>notify("OFFLINE // +"+fmt(reward)+" NC"),600);
+    }
+  }
+}
+
+document.querySelectorAll(".nav-btn").forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll(".nav-btn").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+
+    btn.classList.add("active");
+    document.getElementById(btn.dataset.page).classList.add("active");
+  };
+});
+
+let toastTimer;
+
+function notify(message){
+  const el=document.getElementById("toast");
+  el.textContent=message;
+  el.classList.add("show");
+
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>el.classList.remove("show"),1700);
+}
+
+/* hidden admin:
+   press invisible upper-right area 7 times
+   PIN: 2201
+*/
+
+let secretCount=0;
+let secretTimer;
+
+document.getElementById("secret").onclick=()=>{
+  secretCount++;
+
+  clearTimeout(secretTimer);
+  secretTimer=setTimeout(()=>secretCount=0,2500);
+
+  if(secretCount>=7){
+    secretCount=0;
+    document.getElementById("modal").classList.add("open");
+    document.getElementById("pinInput").focus();
+  }
+};
+
+document.getElementById("pinEnter").onclick=()=>{
+  if(document.getElementById("pinInput").value!=="2201"){
+    notify("ACCESS DENIED");
+    return;
+  }
+
+  document.getElementById("pin").classList.add("hidden");
+  document.getElementById("admin").classList.add("open");
+  notify("ROOT ACCESS");
+};
+
+document.getElementById("closeModal").onclick=()=>{
+  document.getElementById("modal").classList.remove("open");
+};
+
+document.getElementById("addCoins").onclick=()=>{
+  const n=Number(document.getElementById("coinInput").value);
+
+  if(!Number.isFinite(n)) return;
+
+  game.balance=Math.max(0,game.balance+n);
+  save();
+  render();
+  notify("BALANCE UPDATED");
+};
+
+document.getElementById("setCoins").onclick=()=>{
+  const n=Number(document.getElementById("coinInput").value);
+
+  if(!Number.isFinite(n)) return;
+
+  game.balance=Math.max(0,n);
+  save();
+  render();
+  notify("BALANCE OVERRIDDEN");
+};
+
+document.getElementById("setTap").onclick=()=>{
+  const n=Number(document.getElementById("tapInput").value);
+
+  if(!Number.isFinite(n)||n<1) return;
+
+  game.tapPower=Math.floor(n);
+  save();
+  render();
+  notify("CORE POWER UPDATED");
+};
+
+document.getElementById("fullEnergy").onclick=()=>{
+  game.energy=game.maxEnergy;
+  save();
+  render();
+  notify("STABILITY RESTORED");
+};
+
+document.getElementById("giveMillion").onclick=()=>{
+  game.balance+=1000000;
+  save();
+  render();
+  notify("+1,000,000 NC");
+};
+
+document.getElementById("reset").onclick=()=>{
+  if(!confirm("Wipe all local progress?")) return;
+
+  localStorage.removeItem("nullcore");
+  game=cloneInitial();
+  save();
+  render();
+
+  document.getElementById("modal").classList.remove("open");
+  notify("LOCAL DATA WIPED");
+};
+
+offline();
+recalc();
+render();
+save();
+</script>
+
+</body>
+</html>
